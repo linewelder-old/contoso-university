@@ -92,7 +92,7 @@
         Previous
     </a>
 
-    <span>Page @Model.Students.PageIndex</span>
+    <span>Page @Model.Students.PageIndex of @Model.Students.TotalPages</span>
 
     <a asp-page="./Index"
         asp-route-sortOrder="@Model.CurrentSortOrder"
