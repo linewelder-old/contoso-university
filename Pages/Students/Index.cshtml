@@ -26,7 +26,9 @@
     <thead>
         <tr>
             <th>
-                <a asp-page="./Index" asp-route-sortOrder="@Model.NameNextSortOrder">
+                <a asp-page="./Index" asp-route-sortOrder="@Model.NameNextSortOrder"
+                    asp-route-searchString="@Model.CurrentFilter"
+                >
                     @Html.DisplayNameFor(model => model.Students[0].LastName)
                     @if (Model.CurrentSortOrder == SortOrder.NameAsc) {
                         <span>&ShortDownArrow;</span>
@@ -39,7 +41,9 @@
                 @Html.DisplayNameFor(model => model.Students[0].FirstMidName)
             </th>
             <th>
-                <a asp-page="./Index" asp-route-sortOrder="@Model.DateNextSortOrder">
+                <a asp-page="./Index" asp-route-sortOrder="@Model.DateNextSortOrder"
+                    asp-route-searchString="@Model.CurrentFilter"
+                >
                     @Html.DisplayNameFor(model => model.Students[0].EnrollmentDate)
                     @if (Model.CurrentSortOrder == SortOrder.DateAsc) {
                         <span>&ShortUpArrow;</span>

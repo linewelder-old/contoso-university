@@ -37,7 +37,7 @@ public class IndexModel : PageModel
     public string CurrentFilter { get; set; } = null!;
     public SortOrder CurrentSortOrder { get; set; }
 
-    public async Task OnGetAsync(SortOrder? sortOrder, string searchString)
+    public async Task OnGetAsync(SortOrder? sortOrder, string? searchString)
     {
         NameNextSortOrder = sortOrder == SortOrder.NameAsc
             ? SortOrder.NameDesc : SortOrder.NameAsc;
@@ -45,7 +45,7 @@ public class IndexModel : PageModel
             ? SortOrder.DateDesc : SortOrder.DateAsc;
         CurrentSortOrder = sortOrder ?? SortOrder.NameAsc;
 
-        CurrentFilter = searchString;
+        CurrentFilter = searchString ?? "";
 
         IQueryable<Student> students = _context.Students;
         if (!string.IsNullOrEmpty(searchString))
