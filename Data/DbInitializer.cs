@@ -28,13 +28,13 @@ public static class DbInitializer
 
         var courses = new Course[]
         {
-            new Course{CourseID=1050,Title="Chemistry",Credits=3},
-            new Course{CourseID=4022,Title="Microeconomics",Credits=3},
-            new Course{CourseID=4041,Title="Macroeconomics",Credits=3},
+            new Course{CourseID=1050,Title="Web Development in notepad.exe",Credits=3},
+            new Course{CourseID=4022,Title="ASP.NET and Razor Pages",Credits=3},
+            new Course{CourseID=4041,Title="React.js",Credits=3},
             new Course{CourseID=1045,Title="Calculus",Credits=4},
             new Course{CourseID=3141,Title="Trigonometry",Credits=4},
             new Course{CourseID=2021,Title="Composition",Credits=3},
-            new Course{CourseID=2042,Title="Literature",Credits=4}
+            new Course{CourseID=2042,Title="Web Design",Credits=4}
         };
 
         context.Courses.AddRange(courses);
