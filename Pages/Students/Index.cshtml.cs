@@ -16,13 +16,13 @@ public class IndexModel : PageModel
     }
 
     private readonly SchoolContext _context;
+    private readonly IConfiguration _configuration;
 
-    public IndexModel(SchoolContext context)
+    public IndexModel(SchoolContext context, IConfiguration configuration)
     {
         _context = context;
+        _configuration = configuration;
     }
-
-    public IList<Student> Students { get;set; } = default!;
 
     /// <summary>
     /// Sorting parameter to be applied when name column header is pressed.
@@ -37,7 +37,10 @@ public class IndexModel : PageModel
     public string CurrentFilter { get; set; } = null!;
     public SortOrder CurrentSortOrder { get; set; }
 
-    public async Task OnGetAsync(SortOrder? sortOrder, string? searchString)
+    public PaginatedList<Student> Students { get; set; } = null!;
+
+    public async Task OnGetAsync(
+        SortOrder? sortOrder, string? searchString, int? pageIndex)
     {
         NameNextSortOrder = sortOrder == SortOrder.NameAsc
             ? SortOrder.NameDesc : SortOrder.NameAsc;
@@ -74,9 +77,8 @@ public class IndexModel : PageModel
                 break;
         }
 
-        if (_context.Students != null)
-        {
-            Students = await students.AsNoTracking().ToListAsync();
-        }
+        var pageSize = _configuration.GetValue("PageSize", 4);
+        Students = await PaginatedList<Student>.CreateAsync(
+            students.AsNoTracking(), pageIndex ?? 1, pageSize);
     }
 }
