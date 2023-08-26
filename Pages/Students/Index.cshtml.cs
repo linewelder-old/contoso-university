@@ -40,15 +40,15 @@ public class IndexModel : PageModel
     public PaginatedList<Student> Students { get; set; } = null!;
 
     public async Task OnGetAsync(
-        SortOrder? sortOrder, string? searchString, int? pageIndex)
+        SortOrder sortOrder = default, string searchString = "", int pageIndex = 1)
     {
         NameNextSortOrder = sortOrder == SortOrder.NameAsc
             ? SortOrder.NameDesc : SortOrder.NameAsc;
         DateNextSortOrder = sortOrder == SortOrder.DateAsc
             ? SortOrder.DateDesc : SortOrder.DateAsc;
-        CurrentSortOrder = sortOrder ?? SortOrder.NameAsc;
 
-        CurrentFilter = searchString ?? "";
+        CurrentSortOrder = sortOrder;
+        CurrentFilter = searchString;
 
         IQueryable<Student> students = _context.Students;
         if (!string.IsNullOrEmpty(searchString))
@@ -79,6 +79,6 @@ public class IndexModel : PageModel
 
         var pageSize = _configuration.GetValue("PageSize", 4);
         Students = await PaginatedList<Student>.CreateAsync(
-            students.AsNoTracking(), pageIndex ?? 1, pageSize);
+            students.AsNoTracking(), pageIndex, pageSize);
     }
 }
