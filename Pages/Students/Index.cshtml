@@ -76,3 +76,31 @@
         }
     </tbody>
 </table>
+
+@{
+    var prevDisabledClass = Model.Students.HasPreviousPage ? "" : "disabled";
+    var nextDisabledClass = Model.Students.HasNextPage ? "" : "disabled";
+}
+
+<div>
+    <a asp-page="./Index"
+        asp-route-sortOrder="@Model.CurrentSortOrder"
+        asp-route-searchString="@Model.CurrentFilter"
+        asp-route-pageIndex="@(Model.Students.PageIndex - 1)"
+        class="btn btn-primary @prevDisabledClass"
+    >
+        Previous
+    </a>
+
+    <span>Page @Model.Students.PageIndex</span>
+
+    <a asp-page="./Index"
+        asp-route-sortOrder="@Model.CurrentSortOrder"
+        asp-route-searchString="@Model.CurrentFilter"
+        asp-route-pageIndex="@(Model.Students.PageIndex + 1)"
+        class="btn btn-primary @nextDisabledClass"
+    >
+        Next
+    </a>
+</div>
+
