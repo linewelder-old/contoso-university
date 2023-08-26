@@ -1,4 +1,4 @@
-namespace ContosoUniversity.Models;
+namespace ContosoUniversity.Models.ViewModels;
 
 public class StudentVM
 {
