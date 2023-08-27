@@ -16,7 +16,7 @@ public class Department
 
     [Display(Name = "Start Date")]
     [DataType(DataType.Date)]
-    [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}", ApplyFormatInEditMode = true)]
+    [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}")]
     public DateTime StartDate { get; set; }
 
     public int? InstructorID { get; set; }

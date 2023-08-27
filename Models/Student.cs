@@ -20,7 +20,7 @@ public class Student
 
     [Display(Name = "Enrollment Date")]
     [DataType(DataType.Date)]
-    [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}", ApplyFormatInEditMode = true)]
+    [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}")]
     public DateTime EnrollmentDate { get; set; }
 
     [Display(Name = "Full Name")]

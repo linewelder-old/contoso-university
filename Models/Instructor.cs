@@ -20,7 +20,7 @@ public class Instructor
 
     [Display(Name = "Hire Date")]
     [DataType(DataType.Date)]
-    [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}", ApplyFormatInEditMode = true)]
+    [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}")]
     public DateTime HireDate { get; set; }
 
     [Display(Name = "Full Name")]
