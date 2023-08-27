@@ -17,7 +17,7 @@ public class Course
 
     public int DepartmentID { get; set; }
 
-    public Department Department { get; set; } = null!;
-    public ICollection<Enrollment> Enrollments { get; set; } = null!;
-    public ICollection<Instructor> Instructors { get; set; } = null!;
+    public Department? Department { get; set; }
+    public ICollection<Enrollment>? Enrollments { get; set; }
+    public ICollection<Instructor>? Instructors { get; set; }
 }

@@ -24,7 +24,7 @@ public class IndexModel : PageModel
                 CourseID = c.CourseID,
                 Title = c.Title,
                 Credits = c.Credits,
-                DepartmentName = c.Department.Name,
+                DepartmentName = c.Department!.Name,
             })
             .ToListAsync();
     }
