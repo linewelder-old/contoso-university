@@ -44,8 +44,8 @@ public class IndexModel : PageModel
     {
         NameNextSortOrder = sortOrder == SortOrder.NameAsc
             ? SortOrder.NameDesc : SortOrder.NameAsc;
-        DateNextSortOrder = sortOrder == SortOrder.DateAsc
-            ? SortOrder.DateDesc : SortOrder.DateAsc;
+        DateNextSortOrder = sortOrder == SortOrder.DateDesc
+            ? SortOrder.DateAsc : SortOrder.DateDesc;
 
         CurrentSortOrder = sortOrder;
         CurrentFilter = searchString;
