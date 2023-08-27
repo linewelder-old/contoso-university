@@ -1,0 +1,131 @@
+@page
+@model ContosoUniversity.Pages.Instructors.IndexModel
+
+@{
+    ViewData["Title"] = "Instructors";
+}
+
+<h1>Instructors</h1>
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Instructors[0].LastName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Instructors[0].FirstMidName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Instructors[0].HireDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Instructors[0].OfficeAssignment!.Location)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Instructors) {
+            string selectedRow = item.ID == Model.SelectedInstructor?.ID
+                ? "table-success" : "";
+
+            <tr class="@selectedRow">
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FirstMidName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.HireDate)
+                </td>
+                <td>
+                    @if (item.OfficeAssignment is not null)
+                    {
+                        @Html.DisplayFor(modelItem => item.OfficeAssignment.Location)
+                    }
+                </td>
+                <td>
+                    <a asp-page="./Index" asp-route-selectedID="@item.ID">Select</a> |
+                    <a asp-page="./Edit" asp-route-id="@item.ID">Edit</a> |
+                    <a asp-page="./Details" asp-route-id="@item.ID">Details</a> |
+                    <a asp-page="./Delete" asp-route-id="@item.ID">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (Model.SelectedInstructor is not null) {
+    <h3>Courses tought by @Model.SelectedInstructor.FullName</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Number
+                </th>
+                <th>
+                    Title
+                </th>
+                <th>
+                    Department Name
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.SelectedInstructor.Courses!) {
+                string selectedRow = item.CourseID == Model.SelectedCourse?.CourseID
+                    ? "table-success" : "";
+
+                <tr class="@selectedRow">
+                    <td>
+                        @Html.DisplayFor(_ => item.CourseID)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(_ => item.Title)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(_ => item.Department!.Name)
+                    </td>
+                    <td>
+                        <a asp-page="./Index"
+                            asp-route-selectedID="@Model.SelectedInstructor.ID"
+                            asp-route-selectedCourseID="@item.CourseID"
+                        >
+                            Select
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if (Model.SelectedCourse is not null) {
+    <h3>Students enrolled in @Model.SelectedCourse.Title</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Grade</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.SelectedCourse.Enrollments!) {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(_ => item.Student.FullName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(_ => item.Grade)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
