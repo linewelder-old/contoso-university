@@ -15,26 +15,33 @@ public class CreateModel : PageModel
         _context = context;
     }
 
+    public DepartmentList DepartmentsSL { get; set; } = null!;
+
     public IActionResult OnGet()
     {
-        ViewData["DepartmentID"] = new SelectList(_context.Departments, "DepartmentID", "Name");
+        DepartmentsSL = new DepartmentList(_context, null);
         return Page();
     }
 
     [BindProperty]
     public Course Course { get; set; } = default!;
 
-    // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
     public async Task<IActionResult> OnPostAsync()
     {
-        if (!ModelState.IsValid)
+        var course = new Course();
+
+        if (await TryUpdateModelAsync(
+            course,
+            "course",
+            s => s.CourseID, s => s.DepartmentID,
+            s => s.Title, s => s.Credits))
         {
-            return Page();
+            _context.Courses.Add(course);
+            await _context.SaveChangesAsync();
+            return RedirectToPage("./Index");
         }
 
-        _context.Courses.Add(Course);
-        await _context.SaveChangesAsync();
-
-        return RedirectToPage("./Index");
+        DepartmentsSL = new DepartmentList(_context, course.DepartmentID);
+        return Page();
     }
 }
