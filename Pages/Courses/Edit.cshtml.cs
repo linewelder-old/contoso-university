@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -23,47 +19,44 @@ public class EditModel : PageModel
     [BindProperty]
     public Course Course { get; set; } = default!;
 
+    public DepartmentList DepartmentsSL { get; set; } = null!;
+
     public async Task<IActionResult> OnGetAsync(int id)
     {
-        var course =  await _context.Courses.FirstOrDefaultAsync(m => m.CourseID == id);
+        var course = await _context.Courses
+            .Include(c => c.Department)
+            .FirstOrDefaultAsync(c => c.CourseID == id);
         if (course == null)
         {
             return NotFound();
         }
 
         Course = course;
-        ViewData["DepartmentID"] = new SelectList(_context.Departments, "DepartmentID", "Name");
+        DepartmentsSL = new DepartmentList(_context, course.DepartmentID);
         return Page();
     }
 
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see https://aka.ms/RazorPagesCRUD.
-    public async Task<IActionResult> OnPostAsync()
+    public async Task<IActionResult> OnPostAsync(int id)
     {
-        if (!ModelState.IsValid)
+        var course = await _context.Courses.FindAsync(id);
+        if (course == null)
         {
-            return Page();
+            return NotFound();
+        }
+
+        if (await TryUpdateModelAsync(
+            course,
+            "course",
+            c => c.Title, c => c.DepartmentID, c => c.Credits))
+        {
+            await _context.SaveChangesAsync();
+            return RedirectToPage("./Index");
         }
 
         _context.Attach(Course).State = EntityState.Modified;
 
-        try
-        {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!CourseExists(Course.CourseID))
-            {
-                return NotFound();
-            }
-            else
-            {
-                throw;
-            }
-        }
-
-        return RedirectToPage("./Index");
+        DepartmentsSL = new DepartmentList(_context, course.DepartmentID);
+        return Page();
     }
 
     private bool CourseExists(int id)
