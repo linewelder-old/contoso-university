@@ -12,5 +12,5 @@ public class OfficeAssignment
     [Display(Name = "Office Location")]
     public string Location { get; set; } = null!;
 
-    public Instructor Instructor { get; set; } = null!;
+    public Instructor? Instructor { get; set; }
 }

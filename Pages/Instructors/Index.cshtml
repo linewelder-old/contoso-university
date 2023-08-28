@@ -119,7 +119,7 @@
             @foreach (var item in Model.SelectedCourse.Enrollments!) {
                 <tr>
                     <td>
-                        @Html.DisplayFor(_ => item.Student.FullName)
+                        @Html.DisplayFor(_ => item.Student!.FullName)
                     </td>
                     <td>
                         @Html.DisplayFor(_ => item.Grade)
