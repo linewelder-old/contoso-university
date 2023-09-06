@@ -23,5 +23,9 @@ public class SchoolContext : DbContext
         modelBuilder.Entity<Course>().ToTable(nameof(Course))
             .HasMany(c => c.Instructors)
             .WithMany(i => i.Courses);
+
+        modelBuilder.Entity<OfficeAssignment>()
+            .Property(oa => oa.Location)
+            .IsRequired();
     }
 }

@@ -6,7 +6,7 @@ using ContosoUniversity.Models;
 
 namespace ContosoUniversity.Pages.Instructors;
 
-public class EditModel : PageModel
+public class EditModel : InstructorPageModel
 {
     private readonly SchoolContext _context;
 
@@ -17,49 +17,56 @@ public class EditModel : PageModel
 
     [BindProperty]
     public Instructor Instructor { get; set; } = null!;
+    [BindProperty]
+    public string? OfficeLocation { get; set; }
 
     public async Task<IActionResult> OnGetAsync(int id)
     {
-        var instructor =  await _context.Instructors.FindAsync(id);
-        if (instructor == null)
+        var instructor = await _context.Instructors
+            .Include(i => i.OfficeAssignment)
+            .Include(i => i.Courses)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(i => i.ID == id);
+        if (instructor is null)
         {
             return NotFound();
         }
 
         Instructor = instructor;
+        OfficeLocation = instructor.OfficeAssignment?.Location;
+        await PopulateAssignedCourses(_context, instructor);
         return Page();
     }
 
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see https://aka.ms/RazorPagesCRUD.
-    public async Task<IActionResult> OnPostAsync()
+    public async Task<IActionResult> OnPostAsync(int id)
     {
-        if (!ModelState.IsValid)
+        var instructorToUpdate = await _context.Instructors
+            .Include(i => i.OfficeAssignment)
+            .Include(i => i.Courses)
+            .FirstOrDefaultAsync(i => i.ID == id);
+        if (instructorToUpdate is null)
         {
-            return Page();
+            return NotFound();
         }
 
-        _context.Attach(Instructor).State = EntityState.Modified;
-
-        try
+        if (await TryUpdateModelAsync(
+            instructorToUpdate,
+            "Instructor",
+            i => i.FirstMidName, i => i.LastName,
+            i => i.HireDate, i => i.OfficeAssignment))
         {
+            if (string.IsNullOrWhiteSpace(instructorToUpdate.OfficeAssignment?.Location)) {
+                instructorToUpdate.OfficeAssignment = null;
+            }
+
             await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!InstructorExists(Instructor.ID))
-            {
-                return NotFound();
-            }
-            else
-            {
-                throw;
-            }
+            return RedirectToPage("./Index");
         }
 
-        return RedirectToPage("./Index");
+        await _context.Entry(instructorToUpdate)
+            .Collection(i => i.Courses!)
+            .LoadAsync();
+        await PopulateAssignedCourses(_context, instructorToUpdate);
+        return Page();
     }
-
-    private bool InstructorExists(int id) =>
-        (_context.Instructors?.Any(e => e.ID == id)).GetValueOrDefault();
 }
