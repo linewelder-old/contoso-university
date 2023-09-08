@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using ContosoUniversity.Data;
 using ContosoUniversity.Models;
@@ -38,7 +37,7 @@ public class EditModel : InstructorPageModel
         return Page();
     }
 
-    public async Task<IActionResult> OnPostAsync(int id)
+    public async Task<IActionResult> OnPostAsync(int id, string[] selectedCourses)
     {
         var instructorToUpdate = await _context.Instructors
             .Include(i => i.OfficeAssignment)
@@ -59,6 +58,8 @@ public class EditModel : InstructorPageModel
                 instructorToUpdate.OfficeAssignment = null;
             }
 
+            await UpdateInstructorCourses(selectedCourses, instructorToUpdate);
+
             await _context.SaveChangesAsync();
             return RedirectToPage("./Index");
         }
@@ -68,5 +69,25 @@ public class EditModel : InstructorPageModel
             .LoadAsync();
         await PopulateAssignedCourses(_context, instructorToUpdate);
         return Page();
+    }
+
+    private async Task UpdateInstructorCourses(string[] selectedCourses, Instructor instructor)
+    {
+        var selectedCourseIds = new HashSet<int>(selectedCourses.Select(int.Parse));
+        var instructorCourses = new HashSet<int>(
+            instructor.Courses!.Select(c => c.CourseID));
+        await foreach (var course in _context.Courses)
+        {
+            var isSelected = selectedCourseIds.Contains(course.CourseID);
+            var isInstructors = instructorCourses.Contains(course.CourseID);
+            if (isInstructors && !isSelected)
+            {
+                instructor.Courses!.Remove(course);
+            }
+            else if (isSelected && !isInstructors)
+            {
+                instructor.Courses!.Add(course);
+            }
+        }
     }
 }
