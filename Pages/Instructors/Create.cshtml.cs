@@ -1,45 +1,72 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using ContosoUniversity.Data;
 using ContosoUniversity.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 
-namespace ContosoUniversity.Pages.Instructors
+namespace ContosoUniversity.Pages.Instructors;
+
+public class CreateModel : PageModel
 {
-    public class CreateModel : PageModel
+    private readonly SchoolContext _context;
+
+    public CreateModel(SchoolContext context)
     {
-        private readonly ContosoUniversity.Data.SchoolContext _context;
+        _context = context;
+    }
+    
+    public List<Course> Courses { get; set; } = null!;
 
-        public CreateModel(ContosoUniversity.Data.SchoolContext context)
-        {
-            _context = context;
-        }
+    public async Task<IActionResult> OnGet()
+    {
+        Courses = await _context.Courses.ToListAsync();
+        return Page();
+    }
 
-        public IActionResult OnGet()
+    [BindProperty]
+    public Instructor Instructor { get; set; } = default!;
+    
+    public async Task<IActionResult> OnPostAsync(string[] selectedCourses)
+    {
+        if (!ModelState.IsValid)
         {
             return Page();
         }
 
-        [BindProperty]
-        public Instructor Instructor { get; set; } = default!;
-        
-
-        // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
-        public async Task<IActionResult> OnPostAsync()
+        var newInstructor = new Instructor();
+        if (!await TryUpdateModelAsync(
+                newInstructor,
+                "instructor",
+                i => i.FirstMidName, i => i.LastName,
+                i => i.HireDate, i => i.OfficeAssignment
+            ))
         {
-          if (!ModelState.IsValid || _context.Instructors == null || Instructor == null)
-            {
-                return Page();
-            }
-
-            _context.Instructors.Add(Instructor);
-            await _context.SaveChangesAsync();
-
-            return RedirectToPage("./Index");
+            return Page();
         }
+
+        if (string.IsNullOrWhiteSpace(newInstructor.OfficeAssignment?.Location))
+        {
+            newInstructor.OfficeAssignment = null;
+        }
+
+        if (selectedCourses.Length != 0)
+        {
+            newInstructor.Courses = new List<Course>();
+            await _context.Courses.LoadAsync();
+            
+            foreach (var courseId in selectedCourses)
+            {
+                var foundCourse = await _context.Courses.FindAsync(int.Parse(courseId));
+                if (foundCourse is not null)
+                {
+                    newInstructor.Courses.Add(foundCourse);
+                }
+            }
+        }
+        
+        _context.Instructors.Add(newInstructor);
+        await _context.SaveChangesAsync();
+
+        return RedirectToPage("./Index");
     }
 }
