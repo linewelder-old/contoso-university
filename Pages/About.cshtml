@@ -6,7 +6,6 @@
 }
 
 <h2>Our Best Students</h2>
-
 <table class="table">
     <thead>
         <tr>
@@ -27,23 +26,18 @@
 </table>
 
 <h2>Student Body Statistics</h2>
-
 <table class="table">
     <thead>
         <tr>
-            <th>Enrollment Date</th>
-            <th>Students</th>
+            <th>@Html.DisplayNameFor(model => model.EnrollmentsByDate[0].EnrollmentDate)</th>
+            <th>@Html.DisplayNameFor(model => model.EnrollmentsByDate[0].StudentCount)</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model.Students) {
+        @foreach (var item in Model.EnrollmentsByDate) {
             <tr>
-                <td>
-                    @Html.DisplayFor(model => item.EnrollmentDate)
-                </td>
-                <td>
-                    @item.StudentCount
-                </td>
+                <td>@Html.DisplayFor(model => item.EnrollmentDate)</td>
+                <td>@item.StudentCount</td>
             </tr>
         }
     </tbody>
