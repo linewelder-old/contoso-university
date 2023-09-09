@@ -2,10 +2,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ContosoUniversity.Data;
 using ContosoUniversity.Models;
+using ContosoUniversity.Models.ViewModels;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace ContosoUniversity.Pages.Instructors;
 
-public class EditModel : InstructorPageModel
+public class EditModel : PageModel
 {
     private readonly SchoolContext _context;
 
@@ -18,6 +20,8 @@ public class EditModel : InstructorPageModel
     public Instructor Instructor { get; set; } = null!;
     [BindProperty]
     public string? OfficeLocation { get; set; }
+    
+    public List<AssignedCourse> AssignedCourses { get; set; } = new();
 
     public async Task<IActionResult> OnGetAsync(int id)
     {
@@ -35,6 +39,26 @@ public class EditModel : InstructorPageModel
         OfficeLocation = instructor.OfficeAssignment?.Location;
         await PopulateAssignedCourses(_context, instructor);
         return Page();
+    }
+    
+    private async Task PopulateAssignedCourses(
+        SchoolContext context, Instructor instructor)
+    {
+        if (instructor.Courses is null)
+        {
+            throw new ArgumentNullException(null, "Instructor must have assigned courses loaded.");
+        }
+
+        AssignedCourses.Clear();
+        await foreach (var course in context.Courses)
+        {
+            AssignedCourses.Add(new AssignedCourse {
+                CourseID = course.CourseID,
+                Title = course.Title,
+                Assigned = instructor.Courses.Any(
+                    ic => ic.CourseID == course.CourseID)
+            });
+        }
     }
 
     public async Task<IActionResult> OnPostAsync(int id, string[] selectedCourses)
