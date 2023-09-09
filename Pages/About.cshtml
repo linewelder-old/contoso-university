@@ -5,6 +5,27 @@
     ViewData["Title"] = "Student Body Statistics";
 }
 
+<h2>Our Best Students</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.BestStudents[0].LastName)</th>
+            <th>@Html.DisplayNameFor(model => model.BestStudents[0].FirstMidName)</th>
+            <th>@Html.DisplayNameFor(model => model.BestStudents[0].AvgGrade)</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.BestStudents) {
+            <tr>
+                <td>@Html.DisplayFor(_ => item.LastName)</td>
+                <td>@Html.DisplayFor(_ => item.FirstMidName)</td>
+                <td>@Html.DisplayFor(_ => item.AvgGrade)</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
 <h2>Student Body Statistics</h2>
 
 <table class="table">
