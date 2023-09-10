@@ -67,6 +67,7 @@ public class CreateModel : PageModel
         _context.Instructors.Add(newInstructor);
         await _context.SaveChangesAsync();
 
+        Courses = await _context.Courses.ToListAsync();
         return RedirectToPage("./Index");
     }
 }
