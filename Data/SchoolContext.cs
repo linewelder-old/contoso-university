@@ -27,5 +27,9 @@ public class SchoolContext : DbContext
         modelBuilder.Entity<OfficeAssignment>()
             .Property(oa => oa.Location)
             .IsRequired();
+
+        modelBuilder.Entity<Department>()
+            .Property(d => d.ConcurrencyToken)
+            .IsConcurrencyToken();
     }
 }
