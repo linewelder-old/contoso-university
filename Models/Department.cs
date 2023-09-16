@@ -21,6 +21,7 @@ public class Department
 
     public int? InstructorID { get; set; }
 
+    [Display(Name = "Concurrency Token")]
     public Guid ConcurrencyToken { get; set; } = Guid.NewGuid();
 
     public Instructor? Administrator { get; set; }
