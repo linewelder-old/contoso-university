@@ -24,7 +24,7 @@ public class Student
     public DateTime EnrollmentDate { get; set; }
 
     [Display(Name = "Full Name")]
-    public string FullName => $"{LastName}, {FirstMidName}";
+    public string FullName => $"{FirstMidName} {LastName}";
 
     public ICollection<Enrollment>? Enrollments { get; set; } = null;
 }
