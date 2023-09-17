@@ -20,6 +20,12 @@ public class EditModel : PageModel
 
     public DepartmentList DepartmentsSL { get; set; } = null!;
 
+    public override PageResult Page()
+    {
+        DepartmentsSL = new DepartmentList(_context, Course.DepartmentID);
+        return base.Page();
+    }
+
     public async Task<IActionResult> OnGetAsync(int id)
     {
         var course = await _context.Courses
@@ -31,7 +37,6 @@ public class EditModel : PageModel
         }
 
         Course = course;
-        DepartmentsSL = new DepartmentList(_context, course.DepartmentID);
         return Page();
     }
 
@@ -53,8 +58,6 @@ public class EditModel : PageModel
         }
 
         _context.Attach(Course).State = EntityState.Modified;
-
-        DepartmentsSL = new DepartmentList(_context, course.DepartmentID);
         return Page();
     }
 }
