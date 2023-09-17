@@ -1,10 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ContosoUniversity.Data;
 using ContosoUniversity.Models;
@@ -59,8 +54,9 @@ public class EditModel : PageModel
         if (!await TryUpdateModelAsync(
             studentToUpdate,
             "student",
-            s => s.FirstMidName, s => s.LastName, s => s.EnrollmentDate
-        )) {
+            s => s.FirstMidName, s => s.LastName,
+            s => s.EnrollmentDate))
+        {
             return Page();
         }
 
@@ -75,10 +71,5 @@ public class EditModel : PageModel
             return RedirectToAction("./Edit",
                 new { id, saveChangesError = true });
         }
-    }
-
-    private bool StudentExists(int id)
-    {
-        return (_context.Students?.Any(e => e.ID == id)).GetValueOrDefault();
     }
 }
