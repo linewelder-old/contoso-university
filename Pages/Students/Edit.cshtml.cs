@@ -32,6 +32,11 @@ public class EditModel : PageModel
 
     public async Task<IActionResult> OnPostAsync(int id)
     {
+        if (!ModelState.IsValid)
+        {
+            return Page();
+        }
+
         var studentToUpdate = await _context.Students.FindAsync(id);
         if (studentToUpdate is null)
         {
