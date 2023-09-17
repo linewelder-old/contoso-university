@@ -123,7 +123,7 @@ public class EditModel : PageModel
         if (dbEntity.InstructorID != clientEntity.InstructorID)
         {
             var instructor = await _context.Instructors.FindAsync(dbEntity.InstructorID);
-            ModelState.AddModelError("Department.StartDate",
+            ModelState.AddModelError("Department.InstructorID",
                 $"Current value: {instructor?.FullName}");
         }
 
