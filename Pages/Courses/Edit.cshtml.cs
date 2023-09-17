@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ContosoUniversity.Data;
 using ContosoUniversity.Models;
@@ -58,8 +57,5 @@ public class EditModel : PageModel
         DepartmentsSL = new DepartmentList(_context, course.DepartmentID);
         return Page();
     }
-
-    private bool CourseExists(int id)
-        => (_context.Courses?.Any(e => e.CourseID == id)).GetValueOrDefault();
 }
 
