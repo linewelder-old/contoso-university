@@ -15,15 +15,10 @@ public class DetailsModel : PageModel
         _context = context;
     }
 
-    public Student Student { get; set; } = default!; 
+    public Student Student { get; set; } = default!;
 
-    public async Task<IActionResult> OnGetAsync(int? id)
+    public async Task<IActionResult> OnGetAsync(int id)
     {
-        if (id == null || _context.Students == null)
-        {
-            return NotFound();
-        }
-
         var student = await _context.Students
             .Include(s => s.Enrollments!)
             .ThenInclude(e => e.Course)
@@ -34,10 +29,8 @@ public class DetailsModel : PageModel
         {
             return NotFound();
         }
-        else 
-        {
-            Student = student;
-        }
+
+        Student = student;
         return Page();
     }
 }

@@ -21,13 +21,8 @@ public class DeleteModel : PageModel
     public Student Student { get; set; } = default!;
     public string? ErrorMessage { get; set; }
 
-    public async Task<IActionResult> OnGetAsync(int? id, bool? saveChangesError = false)
+    public async Task<IActionResult> OnGetAsync(int id, bool? saveChangesError)
     {
-        if (id == null || _context.Students == null)
-        {
-            return NotFound();
-        }
-
         var student = await _context.Students
             .AsNoTracking()
             .FirstOrDefaultAsync(m => m.ID == id);
@@ -46,13 +41,8 @@ public class DeleteModel : PageModel
         return Page();
     }
 
-    public async Task<IActionResult> OnPostAsync(int? id)
+    public async Task<IActionResult> OnPostAsync(int id)
     {
-        if (id == null)
-        {
-            return NotFound();
-        }
-
         var student = await _context.Students.FindAsync(id);
         if (student is null)
         {
