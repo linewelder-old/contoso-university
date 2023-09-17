@@ -11,23 +11,14 @@ namespace ContosoUniversity.Pages.Students;
 public class CreateModel : PageModel
 {
     private readonly SchoolContext _context;
-    private readonly ILogger<DeleteModel> _logger;
 
-    public CreateModel(SchoolContext context, ILogger<DeleteModel> logger)
+    public CreateModel(SchoolContext context)
     {
         _context = context;
-        _logger = logger;
     }
 
-    public string? ErrorMessage { get; set; }
-
-    public IActionResult OnGet(bool? saveChangesError = false)
+    public IActionResult OnGet()
     {
-        if (saveChangesError.GetValueOrDefault())
-        {
-            ErrorMessage = $"Create failed. Try again.";
-        }
-
         return Page();
     }
 
@@ -49,11 +40,10 @@ public class CreateModel : PageModel
 
             return RedirectToPage("./Index");
         }
-        catch (DbUpdateException ex)
+        catch (DbUpdateException)
         {
-            _logger.LogError(ex, "Create student failed.");
-            return RedirectToAction("./Create",
-                new { saveChangesError = true });
+            ModelState.AddModelError("", "Failed to create student. Try again.");
+            return Page();
         }
     }
 }
