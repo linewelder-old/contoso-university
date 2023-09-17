@@ -21,6 +21,12 @@ public class EditModel : PageModel
 
     public SelectList InstructorSelectList { get; set; } = null!;
 
+    public override PageResult Page()
+    {
+        InstructorSelectList = new SelectList(_context.Instructors, "ID", "FullName");
+        return base.Page();
+    }
+
     public async Task<IActionResult> OnGetAsync(int id)
     {
         var department =  await _context.Departments.FirstOrDefaultAsync(m => m.DepartmentID == id);
@@ -30,7 +36,6 @@ public class EditModel : PageModel
         }
 
         Department = department;
-        PopulateInstructorSelectList();
         return Page();
     }
 
@@ -48,7 +53,6 @@ public class EditModel : PageModel
         if (departmentToUpdate is null)
         {
             ModelState.AddModelError("", "The department was deleted by another user.");
-            PopulateInstructorSelectList();
             return Page();
         }
 
@@ -59,45 +63,39 @@ public class EditModel : PageModel
             .Property(d => d.ConcurrencyToken)
             .OriginalValue = Department.ConcurrencyToken;
 
-        if (await TryUpdateModelAsync(
+        if (!await TryUpdateModelAsync(
                 departmentToUpdate,
                 "department",
                 d => d.Name, d => d.StartDate,
                 d => d.Budget, d => d.InstructorID))
         {
-            try
-            {
-                await _context.SaveChangesAsync();
-                return RedirectToPage("./Index");
-            }
-            catch (DbUpdateConcurrencyException e)
-            {
-                var entry = e.Entries.Single();
-                var dbValues = await entry.GetDatabaseValuesAsync();
-                if (dbValues is null)
-                {
-                    ModelState.AddModelError("", "The department was deleted by another user.");
-                    PopulateInstructorSelectList();
-                    return Page();
-                }
-
-                var dbEntity = (Department)dbValues.ToObject();
-                await DisplayConcurrencyErrors(dbEntity, (Department)entry.Entity);
-
-                // Update the expected concurrency token to accept changes on the next save.
-                Department.ConcurrencyToken = dbEntity.ConcurrencyToken;
-                // Remove the cached concurrency token for the new one to be displayed in the input field.
-                ModelState.Remove($"{nameof(Department)}.{nameof(Department.ConcurrencyToken)}");
-            }
+            return Page();
         }
 
-        PopulateInstructorSelectList();
-        return Page();
-    }
+        try
+        {
+            await _context.SaveChangesAsync();
+            return RedirectToPage("./Index");
+        }
+        catch (DbUpdateConcurrencyException e)
+        {
+            var entry = e.Entries.Single();
+            var dbValues = await entry.GetDatabaseValuesAsync();
+            if (dbValues is null)
+            {
+                ModelState.AddModelError("", "The department was deleted by another user.");
+                return Page();
+            }
 
-    private void PopulateInstructorSelectList()
-    {
-        InstructorSelectList = new SelectList(_context.Instructors, "ID", "FullName");
+            var dbEntity = (Department)dbValues.ToObject();
+            await DisplayConcurrencyErrors(dbEntity, (Department)entry.Entity);
+
+            // Update the expected concurrency token to accept changes on the next save.
+            Department.ConcurrencyToken = dbEntity.ConcurrencyToken;
+            // Remove the cached concurrency token for the new one to be displayed in the input field.
+            ModelState.Remove($"{nameof(Department)}.{nameof(Department.ConcurrencyToken)}");
+            return Page();
+        }
     }
 
     private async Task DisplayConcurrencyErrors(Department dbEntity, Department clientEntity)
