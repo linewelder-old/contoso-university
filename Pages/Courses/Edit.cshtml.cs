@@ -42,23 +42,36 @@ public class EditModel : PageModel
 
     public async Task<IActionResult> OnPostAsync(int id)
     {
+        if (!ModelState.IsValid)
+        {
+            return Page();
+        }
+
         var course = await _context.Courses.FindAsync(id);
-        if (course == null)
+        if (course is null)
         {
             return NotFound();
         }
 
-        if (await TryUpdateModelAsync(
-            course,
-            "course",
-            c => c.Title, c => c.DepartmentID, c => c.Credits))
+        if (!await TryUpdateModelAsync(
+                course,
+                "course",
+                c => c.Title, c => c.DepartmentID,
+                c => c.Credits))
+        {
+            return Page();
+        }
+
+        try
         {
             await _context.SaveChangesAsync();
             return RedirectToPage("./Index");
         }
-
-        _context.Attach(Course).State = EntityState.Modified;
-        return Page();
+        catch (DbUpdateException)
+        {
+            ModelState.AddModelError("", "Failed to save changes. Try again.");
+            return Page();
+        }
     }
 }
 
