@@ -21,13 +21,8 @@ public class EditModel : PageModel
     public Student Student { get; set; } = default!;
     public string? ErrorMessage { get; set; }
 
-    public async Task<IActionResult> OnGetAsync(int? id, bool? saveChangesError = false)
+    public async Task<IActionResult> OnGetAsync(int id, bool? saveChangesError)
     {
-        if (id == null)
-        {
-            return NotFound();
-        }
-
         var student = await _context.Students.FindAsync(id);
         if (student is null)
         {
